@@ -61,26 +61,33 @@ class Nanoleaf extends IPSModule
     {
         $payload = array("command" => "GetAllInfo");
         $info = $this->SendToSplitter($payload);
-        $data = json_decode($info);
-        $name = $data->name;
-        $serialNo = $data->serialNo;
-        $firmwareVersion = $data->firmwareVersion;
-        $model = $data->model;
+        if($info)
+        {
+            $data = json_decode($info);
+            $name = $data->name;
+            $serialNo = $data->serialNo;
+            $firmwareVersion = $data->firmwareVersion;
+            $model = $data->model;
 
-        $state = $data->state->on->value;
-        $brightness = $data->state->brightness->value;
-        $hue = $data->state->hue->value;
-        $sat = $data->state->sat->value;
-        $ct = $data->state->ct->value;
-        $colormode = $data->state->colorMode;
+            $state = $data->state->on->value;
+            $brightness = $data->state->brightness->value;
+            $hue = $data->state->hue->value;
+            $sat = $data->state->sat->value;
+            $ct = $data->state->ct->value;
+            $colormode = $data->state->colorMode;
 
-        SetValue($this->GetIDForIdent("State"), $state);
-        SetValue($this->GetIDForIdent("Brightness"), $brightness);
-        SetValue($this->GetIDForIdent("hue"), $hue);
-        SetValue($this->GetIDForIdent("saturation"), $sat);
-        SetValue($this->GetIDForIdent("colortemperature"), $ct);
-        $allinfo = array ("name" => $name, "serialnumber" => $serialNo, "firmware" => $firmwareVersion, "model" => $model, "state" => $state, "brightness" => $brightness, "hue" => $hue, "sat" => $sat, "ct" => $ct, "colormode" => $colormode);
-        return $allinfo;
+            SetValue($this->GetIDForIdent("State"), $state);
+            SetValue($this->GetIDForIdent("Brightness"), $brightness);
+            SetValue($this->GetIDForIdent("hue"), $hue);
+            SetValue($this->GetIDForIdent("saturation"), $sat);
+            SetValue($this->GetIDForIdent("colortemperature"), $ct);
+            $allinfo = array ("name" => $name, "serialnumber" => $serialNo, "firmware" => $firmwareVersion, "model" => $model, "state" => $state, "brightness" => $brightness, "hue" => $hue, "sat" => $sat, "ct" => $ct, "colormode" => $colormode);
+            return $allinfo;
+        }
+        else
+        {
+            return false; // could not get Info, Token not set
+        }
     }
 
     public function GetState()

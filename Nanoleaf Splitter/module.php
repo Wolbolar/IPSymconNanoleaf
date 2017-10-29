@@ -254,6 +254,10 @@ class NanoleafSplitter extends IPSModule
     {
         $host = $this->ReadPropertyString("Host");
         $token = $this->ReadPropertyString("Token");
+        if ($token == "")
+        {
+            return false;
+        }
         $port = $this->ReadPropertyInteger("Port");
         $url = "http://".$host.":".$port."/api/v1/".$token."/";
         $postfields = "";
