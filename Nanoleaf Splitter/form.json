@@ -1,0 +1,11 @@
+{
+	"elements":
+	[
+		{ "name": "Host",                 "type": "ValidationTextBox", "caption": "IP-Address/Host" },
+        { "name": "Token",                 "type": "ValidationTextBox", "caption": "Token" }
+	],
+	"actions":
+	[
+		{ "type": "Button", "label": "Get Device",  "onClick": "Nanoleaf_GetDevice($id);" }
+        ]
+}

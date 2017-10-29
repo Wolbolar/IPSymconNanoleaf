@@ -1,0 +1,23 @@
+{
+	"translations": {
+		"de": { 
+			"name": "Name",
+			"serial number": "Seriennummer",
+			"firmware version": "Firmware Version",
+			"model": "Modell",
+			"Get Nanoleaf info": "Nanoleaf Information abholen",
+			"state": "Status",
+			"brightness": "Helligkeit",
+			"hue": "Farbton",
+			"ct": "Farbtemperatur",
+			"sat": "Sättigung",
+			"colormode": "Farbmodus",
+			"effect": "Effekt",
+			"Get Device Info": "Nanoleaf Info auslesen",
+			"Authorization": "Authorisierung",
+			"Creating instance.": "Instanz erstellen",
+			"instance created.": "Instanz erstellt",
+			"interface closed.": "Interface geschlossen"
+		}
+	}
+}

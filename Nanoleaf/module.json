@@ -1,0 +1,11 @@
+{
+	"id": "{09AEFA0B-1494-CB8B-A7C0-1982D0D99C7E}",
+	"name": "Nanoleaf",
+	"type": 3,
+	"vendor": "Nanoleaf",
+	"aliases": ["Nanoleaf"],
+	"parentRequirements": ["{D6ED1E11-A213-0475-13B7-15504C8E7300}"],
+	"childRequirements": [],
+	"implemented": ["{C5798059-6764-1A29-F581-926589C303D2}"],
+	"prefix": "Nanoleaf"
+}

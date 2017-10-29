@@ -1,0 +1,11 @@
+{
+	"elements":
+	[
+      { "name": "ID",                 "type": "ValidationTextBox", "caption": "ID" }
+	],
+	"actions":
+	[
+      { "type": "Button", "label": "Get Device",  "onClick": "Nanoleaf_On($id);" },
+      { "type": "Button", "label": "Get Device",  "onClick": "Nanoleaf_Off($id);" }
+        ]
+}
