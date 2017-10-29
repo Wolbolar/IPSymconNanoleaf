@@ -27,7 +27,7 @@ class NanoleafSplitter extends IPSModule
 
     public function GetConfigurationForParent()
     {
-        $Config['Host'] = $this->GetHostIP();
+        //$Config['Host'] = $this->GetHostIP();
         $Config['Port'] = 1900;
         $Config['MulticastIP'] = "239.255.255.250";
         $Config['BindPort'] = 1900;
