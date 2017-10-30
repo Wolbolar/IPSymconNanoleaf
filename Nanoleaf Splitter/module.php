@@ -137,7 +137,7 @@ class NanoleafSplitter extends IPSModule
             $nanoleaf_deviceid = $this->ReadPropertyString("deviceid");
             $nanoleaf_devicename = $this->ReadPropertyString("devicename");
             $nanoleaf_host = $this->ReadPropertyString("Host");
-            $nanoleaf_port = $this->ReadPropertyString("Port");
+            $nanoleaf_port = $this->ReadPropertyInteger("Port");
             if($nl_deviceid == $nanoleaf_deviceid)
             {
                 $change_host = false;
