@@ -14,6 +14,7 @@ class Nanoleaf extends IPSModule
         $this->RegisterPropertyString("serialNo", "");
         $this->RegisterPropertyString("firmwareVersion", "");
         $this->RegisterPropertyString("model", "");
+        $this->RegisterPropertyInteger("UpdateInterval", "5");
         $this->RegisterTimer('NanoleafTimerUpdate', 5000, 'Nanoleaf_GetAllInfo('.$this->InstanceID.');');
     }
 
@@ -46,6 +47,7 @@ class Nanoleaf extends IPSModule
         $this->RegisterProfileIntegerAss("Nanoleaf.Effect", "Light", "", "", 1, 8, 0, 0, $effectass);
         $this->RegisterVariableInteger("effect", $this->Translate("effect"), "Nanoleaf.Effect", 6);
         $this->EnableAction("effect");
+        $this->SetUpdateIntervall();
         // Status Aktiv
         $this->SetStatus(102);
     }
@@ -55,6 +57,12 @@ class Nanoleaf extends IPSModule
         $payload = array("command" => "DeleteUser", "commandvalue" => $token);
         $result = $this->SendToSplitter($payload);
         return $result;
+    }
+
+    protected function SetUpdateIntervall()
+    {
+        $interval = ($this->ReadPropertyInteger("UpdateInterval"))*1000; // interval ms
+        $this->SetTimerInterval("NanoleafTimerUpdate", $interval);
     }
 
     public function GetAllInfo()
@@ -318,6 +326,35 @@ class Nanoleaf extends IPSModule
         IPS_ApplyChanges($this->InstanceID); // Neue Konfiguration übernehmen
     }
 
+    public function GetGlobalOrientation()
+    {
+        $payload = array("command" => "GetGlobalOrientation");
+        $global_orientation_json = $this->SendToSplitter($payload);
+        $global_orientation = json_decode($global_orientation_json)->value;
+        return $global_orientation;
+    }
+
+    public function SetGlobalOrientation(int $orientation)
+    {
+        $payload = array("command" => "SetGlobalOrientation", "commandvalue" => $orientation);
+        $result = $this->SendToSplitter($payload);
+        return $result;
+    }
+
+    public function Layout()
+    {
+        $payload = array("command" => "Layout");
+        $result = $this->SendToSplitter($payload);
+        return $result;
+    }
+
+    public function Identify()
+    {
+        $payload = array("command" => "Identify");
+        $result = $this->SendToSplitter($payload);
+        return $result;
+    }
+
     public function RequestAction($Ident, $Value)
     {
         switch($Ident) {
@@ -460,6 +497,8 @@ class Nanoleaf extends IPSModule
             $form = '"elements":
         [
             { "type": "Label", "label": "Nanoleaf" },
+            { "type": "Label", "label": "Update Interval Nanoleaf" },
+            { "type": "IntervalBox", "name": "UpdateInterval", "caption": "Sekunden" },
         ';
         }
         else
@@ -471,6 +510,8 @@ class Nanoleaf extends IPSModule
             { "name": "serialNo",                 "type": "ValidationTextBox", "caption": "serial number" },
             { "name": "firmwareVersion",                 "type": "ValidationTextBox", "caption": "firmware version" },
             { "name": "model",                 "type": "ValidationTextBox", "caption": "model" },
+            { "type": "Label", "label": "Update Interval Nanoleaf" },
+            { "type": "IntervalBox", "name": "UpdateInterval", "caption": "Sekunden" },
         ';
         }
 

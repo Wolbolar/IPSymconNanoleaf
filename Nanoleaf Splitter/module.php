@@ -360,6 +360,28 @@ class NanoleafSplitter extends IPSModule
             $requesttype = "DELETE";
             $url = "http://".$host.":".$port."/api/v1/".$commandvalue;
         }
+        elseif($command == "GetGlobalOrientation")
+        {
+            $requesttype = "GET";
+            $url = $url."panelLayout/globalOrientation";
+        }
+        elseif($command == "SetGlobalOrientation")
+        {
+            $requesttype = "PUT";
+            $postfields = '{"globalOrientation" : {"value":'.$commandvalue.'}}';
+            $url = $url."panelLayout";
+        }
+        elseif($command == "Layout")
+        {
+            $requesttype = "GET";
+            $url = $url."panelLayout/layout";
+        }
+        elseif($command == "Identify")
+        {
+            $requesttype = "PUT";
+            $url = $url."identify";
+            $postfields = "";
+        }
         $ch = curl_init($url);
         $options = array(
             CURLOPT_RETURNTRANSFER => true,
