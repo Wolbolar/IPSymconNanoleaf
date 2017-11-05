@@ -24,28 +24,23 @@ class Nanoleaf extends IPSModule
         parent::ApplyChanges();
         $this->RegisterVariableBoolean("State", $this->Translate("state"), "~Switch", 1);
         $this->EnableAction("State");
-        $this->RegisterVariableInteger("Brightness", $this->Translate("brightness"), "~Intensity.100", 2); // Brightness (0-100)
-        $this->EnableAction("Brightness");
+        $this->RegisterVariableInteger("color", $this->Translate("color"), "~HexColor", 2); // Color Hex, integer
+        $this->EnableAction("color");
         $this->RegisterProfileInteger("Nanoleaf.Hue", "Light", "", "", 0, 359, 1, 0);
         $this->RegisterVariableInteger("hue", $this->Translate("hue"), "Nanoleaf.Hue", 3); // Hue (0-359), integer
         $this->EnableAction("hue");
         $this->RegisterVariableInteger("saturation", $this->Translate("sat"), "~Intensity.100", 4); // Saturation (0-100)
         $this->EnableAction("saturation");
+        $this->RegisterVariableInteger("Brightness", $this->Translate("brightness"), "~Intensity.100", 5); // Brightness (0-100)
+        $this->EnableAction("Brightness");
+
+
         $this->RegisterProfileInteger("Nanoleaf.Colortemperature", "Light", "", "", 1200, 6500, 100, 0);
-        $this->RegisterVariableInteger("colortemperature", $this->Translate("ct"), "Nanoleaf.Colortemperature", 5); // "max" : 6500, "min" : 1200
+        $this->RegisterVariableInteger("colortemperature", $this->Translate("ct"), "Nanoleaf.Colortemperature", 6); // "max" : 6500, "min" : 1200
         $this->EnableAction("colortemperature");
-        $effectass =  Array(
-            Array(1, "Color Burst",  "Light", -1),
-            Array(2, "Flames",  "Light", -1),
-            Array(3, "Forest",  "Light", -1),
-            Array(4, "Inner Peace",  "Light", -1),
-            Array(5, "Nemo",  "Light", -1),
-            Array(6, "Northern Lights",  "Light", -1),
-            Array(7, "Romantic",  "Light", -1),
-            Array(8, "Snowfall",  "Light", -1)
-        );
+        $effectass = $this->GetEffectArray();
         $this->RegisterProfileIntegerAss("Nanoleaf.Effect", "Light", "", "", 1, 8, 0, 0, $effectass);
-        $this->RegisterVariableInteger("effect", $this->Translate("effect"), "Nanoleaf.Effect", 6);
+        $this->RegisterVariableInteger("effect", $this->Translate("effect"), "Nanoleaf.Effect", 7);
         $this->EnableAction("effect");
         $this->SetUpdateIntervall();
         // Status Aktiv
@@ -63,6 +58,55 @@ class Nanoleaf extends IPSModule
     {
         $interval = ($this->ReadPropertyInteger("UpdateInterval"))*1000; // interval ms
         $this->SetTimerInterval("NanoleafTimerUpdate", $interval);
+    }
+
+    public function UpdateEffectProfile()
+    {
+        $effectass = $this->GetEffectArray();
+        if (IPS_VariableProfileExists("Nanoleaf.Effect"))
+        {
+            foreach($effectass as $Association)
+            {
+                IPS_SetVariableProfileAssociation("Nanoleaf.Effect", $Association[0], $Association[1], $Association[2], $Association[3]);
+            }
+        }
+    }
+
+    protected function GetEffectArray()
+    {
+        $effectass =  Array(
+            Array(1, "Color Burst",  "Light", -1),
+            Array(2, "Flames",  "Light", -1),
+            Array(3, "Forest",  "Light", -1),
+            Array(4, "Inner Peace",  "Light", -1),
+            Array(5, "Nemo",  "Light", -1),
+            Array(6, "Northern Lights",  "Light", -1),
+            Array(7, "Romantic",  "Light", -1),
+            Array(8, "Snowfall",  "Light", -1)
+        );
+        $parentid = $this->GetParent();
+        if($parentid)
+        {
+            $host = IPS_GetProperty($parentid, "Host");
+            if(!$host == "")
+            {
+                $effectlist = $this->ListEffect();
+                $list = json_decode($effectlist);
+                $effectass =  Array( );
+                foreach ($list as $key => $effect)
+                {
+                    $position = $key+1;
+                    $effectass[] = array($position, $effect, "Light", -1);
+                }
+            }
+        }
+        return $effectass;
+    }
+
+    protected function GetParent()
+    {
+        $instance = IPS_GetInstance($this->InstanceID);//array
+        return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;//ConnectionID
     }
 
     public function GetAllInfo()
@@ -137,11 +181,139 @@ class Nanoleaf extends IPSModule
         return $result;
     }
 
+    public function SetColor(int $hexcolor)
+    {
+        $hex = str_pad(dechex($hexcolor), 6, 0, STR_PAD_LEFT);
+        $hsv = $this->HEX2HSV($hex);
+        SetValue($this->GetIDForIdent("color"), $hexcolor);
+        $hue = $hsv['h'];
+        $saturation = $hsv['s'];
+        $brightness = $hsv['v'];
+
+        $this->SetHue($hue);
+        $this->SetSaturation($saturation);
+        $this->SetBrightness($brightness);
+    }
+
+    protected function GetHSB()
+    {
+        $hue = GetValue($this->GetIDForIdent("hue"));
+        $saturation = GetValue($this->GetIDForIdent("saturation"));
+        $brightness = GetValue($this->GetIDForIdent("Brightness"));
+        $hsb = array ("hue" => $hue, "saturation" => $saturation, "brightness" => $brightness);
+        return $hsb;
+    }
+
+    protected function GetColor()
+    {
+        $color = $this->GetIDForIdent("color");
+        return $color;
+    }
+
+    protected function HEX2HSV($hex)
+    {
+        $r = substr($hex, 0, 2);
+        $g = substr($hex, 2, 2);
+        $b = substr($hex, 4, 2);
+        return $this->RGB2HSV(hexdec($r), hexdec($g), hexdec($b));
+    }
+
+    protected function HSV2HEX($h, $s, $v)
+    {
+        $rgb = $this->HSV2RGB($h, $s, $v);
+        $r = str_pad(dechex($rgb['r']), 2, 0, STR_PAD_LEFT);
+        $g = str_pad(dechex($rgb['g']), 2, 0, STR_PAD_LEFT);
+        $b = str_pad(dechex($rgb['b']), 2, 0, STR_PAD_LEFT);
+        return $r.$g.$b;
+    }
+
+    protected function RGB2HSV($r, $g, $b)
+    {
+        if (!($r >= 0 && $r <= 255)) throw new Exception("h property must be between 0 and 255, but is: ${r}");
+        if (!($g >= 0 && $g <= 255)) throw new Exception("s property must be between 0 and 255, but is: ${g}");
+        if (!($b >= 0 && $b <= 255)) throw new Exception("v property must be between 0 and 255, but is: ${b}");
+        $r = ($r / 255);
+        $g = ($g / 255);
+        $b = ($b / 255);
+        $maxRGB = max($r, $g, $b);
+        $minRGB = min($r, $g, $b);
+        $chroma = $maxRGB - $minRGB;
+        $v = $maxRGB * 100; // $v 0 - 100
+        if ($chroma == 0)
+        {
+            return array('h' => 0, 's' => 0, 'v' => $v);
+        }
+        $s = ($chroma / $maxRGB) * 100; // $s 0 - 100
+        if ($r == $minRGB)
+        {
+            $h = 3 - (($g - $b) / $chroma);
+        }
+        elseif ($b == $minRGB)
+        {
+            $h = 1 - (($r - $g) / $chroma);
+        }
+        else
+        {// $g == $minRGB
+            $h = 5 - (($b - $r) / $chroma);
+        }
+        $h = $h / 6 * 360; // 0 - 359
+        return array('h' => round($h), 's' => round($s), 'v' => round($v));
+    }
+
+    protected function HSV2RGB($h, $s, $v)
+    {
+        if (!($h >= 0 && $h <= 359)) throw new Exception("h property must be between 0 and 359, but is: ${h}");
+        if (!($s >= 0 && $s <= 100)) throw new Exception("s property must be between 0 and 100, but is: ${s}");
+        if (!($v >= 0 && $v <= 100)) throw new Exception("v property must be between 0 and 100, but is: ${v}");
+        $h = $h * 6 / 360;
+        $s = $s / 100;
+        $v = $v / 100;
+        $i = floor($h);
+        $f = $h - $i;
+        $m = $v * (1 - $s);
+        $n = $v * (1 - $s * $f);
+        $k = $v * (1 - $s * (1 - $f));
+        switch ($i) {
+            case 0:
+                list($r, $g, $b) = array($v, $k, $m);
+                break;
+            case 1:
+                list($r, $g, $b) = array($n, $v, $m);
+                break;
+            case 2:
+                list($r, $g, $b) = array($m, $v, $k);
+                break;
+            case 3:
+                list($r, $g, $b) = array($m, $n, $v);
+                break;
+            case 4:
+                list($r, $g, $b) = array($k, $m, $v);
+                break;
+            case 5:
+            case 6:
+                list($r, $g, $b) = array($v, $m, $n);
+                break;
+        }
+        $r = round($r * 255);
+        $g = round($g * 255);
+        $b = round($b * 255);
+        return array('r' => $r, 'g' => $g, 'b' => $b);
+    }
+
+    protected function SetHexColor()
+    {
+        $hsb = $this->GetHSB();
+        $hex = $this->HSV2HEX($hsb["hue"], $hsb["saturation"], $hsb["brightness"]);
+        $hexcolor = hexdec($hex);
+        SetValue($this->GetIDForIdent("color"), $hexcolor);
+    }
+
     public function SetBrightness(int $brightness)
     {
         $payload = array("command" => "SetBrightness", "commandvalue" => $brightness);
         $result = $this->SendToSplitter($payload);
         SetValue($this->GetIDForIdent("Brightness"), $brightness);
+        $this->SetHexColor();
         return $result;
     }
 
@@ -159,6 +331,7 @@ class Nanoleaf extends IPSModule
         $payload = array("command" => "SetHue", "commandvalue" => $hue);
         $result = $this->SendToSplitter($payload);
         SetValue($this->GetIDForIdent("hue"), $hue);
+        $this->SetHexColor();
         return $result;
     }
 
@@ -176,6 +349,7 @@ class Nanoleaf extends IPSModule
         $payload = array("command" => "SetSaturation", "commandvalue" => $sat);
         $result = $this->SendToSplitter($payload);
         SetValue($this->GetIDForIdent("saturation"), $sat);
+        $this->SetHexColor();
         return $result;
     }
 
@@ -217,37 +391,13 @@ class Nanoleaf extends IPSModule
         $payload = array("command" => "SelectEffect", "commandvalue" => $effect);
         $result = $this->SendToSplitter($payload);
         $effect_int = "1";
-        if($effect == "Color Burst")
+        $effects = $this->GetCurrentEffectProfile();
+        foreach ($effects as $key => $effectposition)
         {
-            $effect_int = 1;
-        }
-        elseif($effect == "Flames")
-        {
-            $effect_int = 2;
-        }
-        elseif($effect == "Forest")
-        {
-            $effect_int = 3;
-        }
-        elseif($effect == "Inner Peace")
-        {
-            $effect_int = 4;
-        }
-        elseif($effect == "Nemo")
-        {
-            $effect_int = 5;
-        }
-        elseif($effect == "Northern Lights")
-        {
-            $effect_int = 6;
-        }
-        elseif($effect == "Romantic")
-        {
-            $effect_int = 7;
-        }
-        elseif($effect == "Snowfall")
-        {
-            $effect_int = 8;
+            if($effectposition["Name"] == $effect)
+            {
+                $effect_int = $effectposition["Value"];
+            }
         }
         SetValue($this->GetIDForIdent("effect"), $effect_int);
         return $result;
@@ -256,40 +406,22 @@ class Nanoleaf extends IPSModule
     protected function SelectEffectInt(int $effect) // "Color Burst","Flames","Forest","Inner Peace","Nemo","Northern Lights","Romantic","Snowfall"
     {
         $effectstring = "Snowfall";
-        if($effect == 1)
+        $effects = $this->GetCurrentEffectProfile();
+        foreach ($effects as $key => $effectposition)
         {
-            $effectstring = "Color Burst";
-        }
-        elseif($effect == 2)
-        {
-            $effectstring = "Flames";
-        }
-        elseif($effect == 3)
-        {
-            $effectstring = "Forest";
-        }
-        elseif($effect == 4)
-        {
-            $effectstring = "Inner Peace";
-        }
-        elseif($effect == 5)
-        {
-            $effectstring = "Nemo";
-        }
-        elseif($effect == 6)
-        {
-            $effectstring = "Northern Lights";
-        }
-        elseif($effect == 7)
-        {
-            $effectstring = "Romantic";
-        }
-        elseif($effect == 8)
-        {
-            $effectstring = "Snowfall";
+            if($effectposition["Value"] == $effect)
+            {
+                $effectstring = $effectposition["Name"];
+            }
         }
         $result = $this->SelectEffect($effectstring);
         return $result;
+    }
+
+    protected function GetCurrentEffectProfile()
+    {
+        $effects =	IPS_GetVariableProfile("Nanoleaf.Effect")["Associations"];
+        return $effects;
     }
 
     public function GetEffect()
@@ -299,14 +431,14 @@ class Nanoleaf extends IPSModule
         return $effect;
     }
 
-    /*
+
     public function ListEffect()
     {
         $payload = array("command" => "List");
         $result = $this->SendToSplitter($payload);
         return $result;
     }
-    */
+
 
     public function GetInfo()
     {
@@ -367,6 +499,9 @@ class Nanoleaf extends IPSModule
                 {
                     $this->Off();
                 }
+                break;
+            case "color":
+                $this->SetColor($Value);
                 break;
             case "Brightness":
                 $this->SetBrightness($Value);
@@ -524,7 +659,8 @@ class Nanoleaf extends IPSModule
         [
         { "type": "Button", "label": "On",  "onClick": "Nanoleaf_On($id);" },
         { "type": "Button", "label": "Off",  "onClick": "Nanoleaf_Off($id);" },
-        { "type": "Button", "label": "Get Nanoleaf info",  "onClick": "Nanoleaf_GetInfo($id);" }
+        { "type": "Button", "label": "Get Nanoleaf info",  "onClick": "Nanoleaf_GetInfo($id);" },
+        { "type": "Button", "label": "Update Effects",  "onClick": "Nanoleaf_UpdateEffectProfile($id);" }
         ],';
         return  $form;
     }

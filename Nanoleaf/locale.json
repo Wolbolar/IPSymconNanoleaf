@@ -13,6 +13,8 @@
 			"sat": "Sättigung",
 			"colormode": "Farbmodus",
 			"effect": "Effekt",
+			"color": "Farbe",
+			"Update Effects": "Update Effekte",
 			"Get Device Info": "Nanoleaf Info auslesen",
 			"Authorization": "Authorisierung",
 			"Creating instance.": "Instanz erstellen",

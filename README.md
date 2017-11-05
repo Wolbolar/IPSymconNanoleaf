@@ -20,9 +20,10 @@ Mit dem Modul lässt sie ein Nanoleaf von IP-Symcon aus schalten.
 ### Funktionen:  
 
  - Ein/Aus 
- - Helligkeit
+ - Farbauswahl
  - Farbton
  - Sättigung
+ - Helligkeit
  - Farbtemperatur
  - Effekt setzten
 	  
@@ -150,6 +151,15 @@ Liest die Sättigung aus
 `Nanoleaf_GetColortemperature(integer $InstanceID)`
 
 Liest die Farbtemperatur aus
+
+`Nanoleaf_ListEffect(integer $InstanceID)`
+
+Gibt die verfügbaren Effekte aus
+
+`Nanoleaf_UpdateEffectProfile(integer $InstanceID)`
+
+Liest die Effekte neu aus und aktualisiert das Variablenprofil
+
 
 ###  b. GUIDs und Datenaustausch:
 
