@@ -1,15 +1,19 @@
 {
 	"translations": {
-		"de": { 
+		"de": {
+			"Nanoleaf configuration by user": "Nanoleaf Konfiguration",
+			"manual configuration": "Manuelle Konfiguration",
 			"IP-Address/Host": "IP-Adresse / Host",
 			"Port": "Port",
 			"Device ID": "Device ID",
 			"Device Name": "Device Name",
 			"Get a token from Nanoleaf:": "Token von Nanoleaf anfordern:",
+			"1. Turn on the Nanoleaf and then press the button Search Nanoleaf below. The Nanoleaf instance will get configuration from the Nanoleaf.": "1. Den Nanoleaf einschalten und dann den Nanoleaf suchen knopf drücken. Die Instanz bezieht die Daten vom Nanoleaf.",
+			"2. Press the button below to search for Nanoleaf": "2. Den Knopf unterhalb drücken um nach dem Nanoleaf zu suchen",
+			"Search Nanoleaf": "Nanoleaf suchen",
+			"3. Wait for 15 seconds, if the process is finished you can open the instance once again and can see the IP adress, deviceid und device name.": "3. Für 15 Sekunden warten, wenn der Prozess abgeschlossen worden ist kann die Instanz erneut geöffnet werden und die IP Adresse, Device ID und Device Name wurden übernommen.",
 			"1. Hold the on-off button down for 5-7 seconds until the LED starts flashing in a pattern": "Den Ein/Ausschalter für 5-7 Sekunden gedrückt halten bis die LED anfängt zu blinken",
-			"2. Press the button below Get Token": "Den Knopf unterhalb Token abholen drücken",
-			"1. Turn on the Nanoleaf and wait for 1 - 2 minutes. The Nanoleaf instance will get configuration from the Nanoleaf.": "1. Den Nanoleaf einschalten und 1 - 2 Minuten warten, die Instanz zwischenzeitlich schließen. Die Instanz erhält die Konfiguation vom Nanoleaf.",
-			"2. If the process is finished after 1- 2 minutes you can open the instance and can see the IP adress, deviceid und device name.": "2. Nachdem der Prozess abgeschlossen wurde ist in der Instanz die Ip Adresse, Geräte Name und Geräte ID sichtbar.",
+			"2. If the process is finished after 1- 2 minutes you can open the instance and can see the IP adress, deviceid und device name.": "2. Nachdem der Prozess abgeschlossen wurde ist in der Instanz die IP Adresse, Geräte Name und Geräte ID sichtbar.",
 			"Get Token": "Token abholen",
 			"Creating instance.": "Instanz erstellen",
 			"instance created.": "Instanz erstellt",

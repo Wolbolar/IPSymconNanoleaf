@@ -16,6 +16,7 @@ class NanoleafSplitter extends IPSModule
         $this->RegisterPropertyString("Token", "");
         $this->RegisterPropertyString("deviceid", "");
         $this->RegisterPropertyString("devicename", "");
+        $this->RegisterPropertyBoolean("manualconfiguration", true);
     }
 
     public function ApplyChanges()
@@ -74,40 +75,43 @@ class NanoleafSplitter extends IPSModule
             //$data_nanoleaf = explode("<CR><LF>", $dataio);
             $data_nanoleaf = explode("\r\n", $dataio);
             $nanoleaf_device = array_search('NT: nanoleaf_aurora:light', $data_nanoleaf);
+            $manualconfiguration = $this->ReadPropertyBoolean("manualconfiguration");
             if ($nanoleaf_device)
             {
                 $this->SendDebug("Nanoleaf Splitter:", "NOTIFY Nanoleaf found ".json_encode($dataio),0);
 
-
-                $data_nanoleaf_debug = json_encode($data_nanoleaf);
-                $this->SendDebug("Nanoleaf Splitter:", "Nanoleaf data ".$data_nanoleaf_debug,0);
-                $ip = "";
-                $port = "";
-                $nl_devicename = "";
-                $nl_deviceid = "";
-                foreach($data_nanoleaf as $info)
+                if(!$manualconfiguration)
                 {
-                    $host = stristr($info, "Location: ");
+                    $data_nanoleaf_debug = json_encode($data_nanoleaf);
+                    $this->SendDebug("Nanoleaf Splitter:", "Nanoleaf data ".$data_nanoleaf_debug,0);
+                    $ip = "";
+                    $port = "";
+                    $nl_devicename = "";
+                    $nl_deviceid = "";
+                    foreach($data_nanoleaf as $info)
+                    {
+                        $host = stristr($info, "Location: ");
 
-                    if ($host)
-                    {
-                        $host = substr($info, 17);
-                        $host = explode(":", $host);
-                        $ip = $host[0];
-                        $port = $host[1];
+                        if ($host)
+                        {
+                            $host = substr($info, 17);
+                            $host = explode(":", $host);
+                            $ip = $host[0];
+                            $port = $host[1];
+                        }
+                        $nl_deviceid_key = stristr($info, "nl-deviceid: ");
+                        if ($nl_deviceid_key)
+                        {
+                            $nl_deviceid = substr($info, 13);
+                        }
+                        $nl_devicename_key = stristr($info, "nl-devicename: ");
+                        if ($nl_devicename_key)
+                        {
+                            $nl_devicename = substr($info, 15);
+                        }
                     }
-                    $nl_deviceid_key = stristr($info, "nl-deviceid: ");
-                    if ($nl_deviceid_key)
-                    {
-                        $nl_deviceid = substr($info, 13);
-                    }
-                    $nl_devicename_key = stristr($info, "nl-devicename: ");
-                    if ($nl_devicename_key)
-                    {
-                        $nl_devicename = substr($info, 15);
-                    }
+                    $this->SetValuesNanoleaf($ip, $port, $nl_devicename, $nl_deviceid);
                 }
-                $this->SetValuesNanoleaf($ip, $port, $nl_devicename, $nl_deviceid);
             }
         }
     }
@@ -413,7 +417,22 @@ class NanoleafSplitter extends IPSModule
     protected function FormHead()
     {
         $host = $this->ReadPropertyString("Host");
-        if($host == "")
+        $manualconfiguration = $this->ReadPropertyBoolean("manualconfiguration");
+        if($manualconfiguration)
+        {
+            $form = '"elements":
+[
+{ "type": "Label", "label": "Nanoleaf Splitter" },
+{ "type": "Label", "label": "Nanoleaf configuration by user" },
+{ "type": "CheckBox", "name": "manualconfiguration", "caption": "manual configuration" },
+{ "name": "Host",                 "type": "ValidationTextBox", "caption": "IP-Address/Host" },
+{ "type": "NumberSpinner", "name": "Port", "caption": "Port" },
+{ "name": "Token",                "type": "ValidationTextBox", "caption": "Token" },
+{ "name": "deviceid",            "type": "ValidationTextBox", "caption": "Device ID" },
+{ "name": "devicename",          "type": "ValidationTextBox", "caption": "Device Name" },
+';
+        }
+        elseif($host == "" && $manualconfiguration == false)
         {
             $form = '"elements":
 [
@@ -425,6 +444,8 @@ class NanoleafSplitter extends IPSModule
             $form = '"elements":
 [
 { "type": "Label", "label": "Nanoleaf Splitter" },
+{ "type": "Label", "label": "Nanoleaf configuration by user" },
+{ "type": "CheckBox", "name": "manualconfiguration", "caption": "manual configuration" },
 { "name": "Host",                 "type": "ValidationTextBox", "caption": "IP-Address/Host" },
 { "type": "NumberSpinner", "name": "Port", "caption": "Port" },
 { "name": "Token",                "type": "ValidationTextBox", "caption": "Token" },
@@ -446,8 +467,8 @@ class NanoleafSplitter extends IPSModule
             $form = '"actions":
 [
 { "type": "Label", "label": "1. Turn on the Nanoleaf and then press the button Search Nanoleaf below. The Nanoleaf instance will get configuration from the Nanoleaf." },
-{ "type": "Label", "label": "2. Press the button below Get Token" },
-{ "type": "Button", "label": "Search Nanoleaf",  "onClick": "NanoleafS_MSearch($id);" }
+{ "type": "Label", "label": "2. Press the button below to search for Nanoleaf" },
+{ "type": "Button", "label": "Search Nanoleaf",  "onClick": "NanoleafS_MSearch($id);" },
 { "type": "Label", "label": "3. Wait for 15 seconds, if the process is finished you can open the instance once again and can see the IP adress, deviceid und device name." }
 ],';
         }
