@@ -40,10 +40,16 @@ class NanoleafSplitter extends IPSModule
 
     protected function GetHostIP()
     {
-        $ip = exec("sudo ifconfig eth0 | grep 'inet Adresse:' | cut -d: -f2 | awk '{ print $1}'");
-        if($ip == "")
+        $ipinfo = Sys_GetNetworkInfo ( );
+        if(empty($ipinfo))
         {
-            $ipinfo = Sys_GetNetworkInfo ( );
+            exec('/sbin/ifconfig', $resultArray);
+            $result = implode(",", $resultArray);
+            $ippos = strpos($result, "inet 192");
+            $ip = explode( ' ', substr($result, $ippos+5, 16))[0];
+        }
+        else
+        {
             $ip = $ipinfo[0]['IP'];
         }
         return $ip;
