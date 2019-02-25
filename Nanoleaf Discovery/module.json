@@ -1,0 +1,13 @@
+{
+  "id": "{8F9CA22B-7F62-A099-10EF-EE6477B93246}",
+  "name": "NanoleafDiscovery",
+  "type": 5,
+  "vendor": "Nanoleaf",
+  "aliases": [
+    "Nanoleaf Discovery"
+  ],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "NanoleafDiscovery"
+}
