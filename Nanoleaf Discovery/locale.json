@@ -1,0 +1,29 @@
+{
+  "translations": {
+    "de": {
+      "device name": "Geräte Name",
+      "manufacturer": "Hersteller",
+      "type": "Typ",
+      "device id": "Geräte ID",
+      "devices": "Geräte",
+      "IP adress": "IP Adresse",
+      "port": "Port",
+      "uuid": "uuid",
+      "category for Nanoleaf devices": "Kategorie für Nanoleaf Geräte",
+      "category Nanoleaf": "Kategorie Nanoleaf",
+      "create scripts for remote control (alternative or addition for remote control via webfront):": "Skripte anlegen zur Steuerung (Alternative oder Ergänzung zur Steuerung mit Variablen über den Webfront):",
+      "Nanoleaf script": "Nanoleaf Skript",
+      "Nanoleaf devices": "Nanoleaf Geräte",
+      "Refresh list": "Liste aktualisieren",
+      "Read configuration": "Konfiguration auslesen",
+      "Add Device:": "Gerät hinzufügen:",
+      "device name:": "Geräte Name:",
+      "Creating instance.": "Instanz erstellen.",
+      "Nanoleaf Discovery created.": "Nanoleaf Discovery erstellt.",
+      "interface closed.": "Interface geschlossen.",
+      "Please follow the instructions.": "Bitte den Anleitung folgen.",
+      "no category selected.": "keine Kategorie ausgewählt."
+
+    }
+  }
+}

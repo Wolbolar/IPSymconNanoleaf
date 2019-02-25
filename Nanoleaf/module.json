@@ -4,8 +4,8 @@
 	"type": 3,
 	"vendor": "Nanoleaf",
 	"aliases": ["Nanoleaf"],
-	"parentRequirements": ["{D6ED1E11-A213-0475-13B7-15504C8E7300}"],
+	"parentRequirements": [],
 	"childRequirements": [],
-	"implemented": ["{C5798059-6764-1A29-F581-926589C303D2}"],
+	"implemented": [],
 	"prefix": "Nanoleaf"
 }
