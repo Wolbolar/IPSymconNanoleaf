@@ -872,7 +872,19 @@ class Nanoleaf extends IPSModule
 			]
 		];
 		$token = $this->ReadAttributeString("Token");
-		if ($token == "") {
+		$uuid = $this->ReadPropertyString("uuid");
+		if ($uuid == "") {
+			$form = array_merge_recursive(
+				$form,
+				[
+					[
+						'type' => 'Label',
+						'caption' => 'This device should be created by the Nanoleaf configurator, please open the Nanoleaf configurator and create the device there.'
+					]
+				]
+			);
+		}
+		if ($token == "" && $uuid != "") {
 			$form = array_merge_recursive(
 				$form,
 				[
@@ -892,7 +904,7 @@ class Nanoleaf extends IPSModule
 				]
 			);
 		}
-		if ($token != "") {
+		if ($token != "" && $uuid != "") {
 			$form = array_merge_recursive(
 				$form,
 				[
@@ -993,7 +1005,8 @@ class Nanoleaf extends IPSModule
 		$form = [
 		];
 		$token = $this->ReadAttributeString("Token");
-		if ($token != "") {
+		$uuid = $this->ReadPropertyString("uuid");
+		if ($token != "" && $uuid != "") {
 			$form = array_merge_recursive(
 				$form,
 				[
