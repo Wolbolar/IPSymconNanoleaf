@@ -879,7 +879,7 @@ class Nanoleaf extends IPSModule
 				[
 					[
 						'type' => 'Label',
-						'caption' => 'This device should be created by the Nanoleaf configurator, please open the Nanoleaf configurator and create the device there.'
+						'caption' => 'This device should be created by the Nanoleaf dicovery instance, please open the Nanoleaf discovery instance and create the device there.'
 					]
 				]
 			);
