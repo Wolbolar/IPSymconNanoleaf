@@ -230,7 +230,7 @@ class Nanoleaf extends IPSModule
 		
 		
 		$host = $this->ReadPropertyString("host");
-		$token = $this->ReadPropertyString("Token");
+		$token = $this->ReadAttributeString("Token");
 		if ($token == "")
 		{
 			return false;
