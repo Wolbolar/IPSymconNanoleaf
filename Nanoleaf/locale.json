@@ -12,6 +12,7 @@
 			"Serial Number": "Seriennummer",
 			"Firmware Version": "Firmware Version",
 			"Update Interval Nanoleaf": "Aktualisierungsintervall Nanoleaf",
+			"This device should be created by the Nanoleaf configurator, please open the Nanoleaf configurator and create the device there.": "Diese Geräteinstanz muss mit dem Nanoleaf Konfigurator erzeugt werden, bitte zum Nanoleaf Konfigurator wechseln und dort die Instanz anlegen lassen.",
 			"1. Hold the on-off button down for 5-7 seconds until the LED starts flashing in a pattern": "1. Den An/Aus Knopf des Nanoleaf für 5 - 7 Sekunden gedrückt halten bis die LED mit dem Blinken beginnt",
 			"2. Press the button below Get Token": "2. Den Knopf drücken um einen Token vom Gerät zu holen",
 			"Get Token": "Token abholen",
