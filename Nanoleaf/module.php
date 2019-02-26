@@ -871,7 +871,7 @@ class Nanoleaf extends IPSModule
 				'caption' => 'Nanoleaf'
 			]
 		];
-		$token = $this->ReadPropertyString("Token");
+		$token = $this->ReadAttributeString("Token");
 		if ($token == "") {
 			$form = array_merge_recursive(
 				$form,
@@ -992,7 +992,7 @@ class Nanoleaf extends IPSModule
 	{
 		$form = [
 		];
-		$token = $this->ReadPropertyString("Token");
+		$token = $this->ReadAttributeString("Token");
 		if ($token != "") {
 			$form = array_merge_recursive(
 				$form,
