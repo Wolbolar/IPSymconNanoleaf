@@ -916,7 +916,7 @@ class Nanoleaf extends IPSModule
 					],
 					[
 						'type' => 'Label',
-						'caption' => $this->ReadPropertyString("Token")
+						'caption' => $this->ReadAttributeString("Token")
 					],
 					[
 						'type' => 'List',
