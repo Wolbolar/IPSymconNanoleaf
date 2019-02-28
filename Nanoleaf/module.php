@@ -214,6 +214,8 @@ class Nanoleaf extends IPSModule
 			$token = json_decode($token_response)->auth_token;
 			$this->SendDebug("Splitter Received Token:",$token,0);
 			$this->WriteAttributeString("Token", $token);
+			IPS_Sleep(1000);
+			$this->ValidateConfiguration();
 			$this->GetInfo();
 			return $token;
 		}
