@@ -304,8 +304,17 @@ class NanoleafDiscovery extends IPSModule
 	{
 		$result = array();
 
-		$devices = $this->mSearch();
+		$devices = $this->mSearch("nanoleaf_aurora:light"); // Aurora
 		$this->SendDebug("Discover Response:", json_encode($devices), 0);
+		$result = $this->CreateDeviceList($result, $devices);
+		$devices = $this->mSearch("nanoleaf:nl29"); // Canvas
+		$this->SendDebug("Discover Response:", json_encode($devices), 0);
+		$result = $this->CreateDeviceList($result, $devices);
+		return $result;
+	}
+
+	private function CreateDeviceList($result, $devices)
+	{
 		foreach ($devices as $device) {
 
 			$obj = array();
@@ -326,6 +335,15 @@ class NanoleafDiscovery extends IPSModule
 		return $result;
 	}
 
+	/** Serach Aurora nanoleaf_aurora:light / Canvas nanoleaf:nl29
+	 * @param string $st
+	 * @param int $mx
+	 * @param string $man
+	 * @param null $from
+	 * @param null $port
+	 * @param int $sockTimout
+	 * @return array
+	 */
 	protected function mSearch($st = 'nanoleaf_aurora:light', $mx = 2, $man = 'ssdp:discover', $from = null, $port = null, $sockTimout = 7)
 	{
 		$user_agent = "MacOSX/10.8.2 UPnP/1.1 PHP-UPnP/0.0.1a";
