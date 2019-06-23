@@ -387,7 +387,7 @@ class NanoleafDiscovery extends IPSModule
 		{
 			if(isset($device["st"]))
 			{
-				if($device["st"] == "nanoleaf_aurora:light")
+				if($device["st"] == "nanoleaf_aurora:light" || $device["st"] == "nanoleaf:nl29")
 				{
 					$nanoleaf_response[] = ["uuid" => str_ireplace( 'uuid:', '', $device["usn"] ), "location" => $device["location"], "nl-deviceid" => $device["nl-deviceid"], "nl-devicename" => $device["nl-devicename"]];
 				}
