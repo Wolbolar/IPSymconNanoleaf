@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 class Nanoleaf extends IPSModule
 {
     public function Create()
@@ -20,7 +22,7 @@ class Nanoleaf extends IPSModule
         $this->RegisterPropertyInteger('UpdateInterval', '5');
         $this->RegisterPropertyString('NanoleafInformation', '');
         $this->RegisterAttributeString('Token', '');
-        $this->RegisterTimer('NanoleafTimerUpdate', 5000, 'Nanoleaf_GetAllInfo('.$this->InstanceID.');');
+        $this->RegisterTimer('NanoleafTimerUpdate', 5000, 'Nanoleaf_GetAllInfo(' . $this->InstanceID . ');');
         //we will wait until the kernel is ready
         $this->RegisterMessage(0, IPS_KERNELMESSAGE);
     }
@@ -186,7 +188,7 @@ class Nanoleaf extends IPSModule
         2. Sending a POST request to the authorization endpoint */
         $host = $this->ReadPropertyString('host');
         $port = $this->ReadPropertyString('port');
-        $url = 'http://'.$host.':'.$port.'/api/v1/new';
+        $url = 'http://' . $host . ':' . $port . '/api/v1/new';
         $ch = curl_init($url);
         $options = [
             CURLOPT_RETURNTRANSFER => true,
@@ -227,84 +229,84 @@ class Nanoleaf extends IPSModule
             return false;
         }
         $port = $this->ReadPropertyString('port');
-        $url = 'http://'.$host.':'.$port.'/api/v1/'.$token.'/';
+        $url = 'http://' . $host . ':' . $port . '/api/v1/' . $token . '/';
         $postfields = '';
         $requesttype = 'GET';
         if ($command == 'On') {
-            $url = $url.'state';
+            $url = $url . 'state';
             $postfields = '{"on" : {"value":true}}';
             $requesttype = 'PUT';
         } elseif ($command == 'Off') {
-            $url = $url.'state';
+            $url = $url . 'state';
             $postfields = '{"on" : {"value":false}}';
             $requesttype = 'PUT';
         } elseif ($command == 'GetState') {
-            $url = $url.'state/on';
+            $url = $url . 'state/on';
             $requesttype = 'GET';
         } elseif ($command == 'SetBrightness') {
-            $url = $url.'state';
-            $postfields = '{"brightness" : {"value":'.$commandvalue.'}}';
+            $url = $url . 'state';
+            $postfields = '{"brightness" : {"value":' . $commandvalue . '}}';
             $requesttype = 'PUT';
         } elseif ($command == 'GetBrightness') {
-            $url = $url.'state/brightness';
+            $url = $url . 'state/brightness';
             $requesttype = 'GET';
         } elseif ($command == 'SetHue') {
-            $url = $url.'state';
-            $postfields = '{"hue" : {"value":'.$commandvalue.'}}';
+            $url = $url . 'state';
+            $postfields = '{"hue" : {"value":' . $commandvalue . '}}';
             $requesttype = 'PUT';
         } elseif ($command == 'GetHue') {
-            $url = $url.'state/hue';
+            $url = $url . 'state/hue';
             $requesttype = 'GET';
         } elseif ($command == 'SetSaturation') {
-            $url = $url.'state';
-            $postfields = '{"sat" : {"value":'.$commandvalue.'}}';
+            $url = $url . 'state';
+            $postfields = '{"sat" : {"value":' . $commandvalue . '}}';
             $requesttype = 'PUT';
         } elseif ($command == 'GetSaturation') {
-            $url = $url.'state/sat';
+            $url = $url . 'state/sat';
             $requesttype = 'GET';
         } elseif ($command == 'SetColortemperature') {
-            $url = $url.'state';
-            $postfields = '{"ct" : {"value":'.$commandvalue.'}}';
+            $url = $url . 'state';
+            $postfields = '{"ct" : {"value":' . $commandvalue . '}}';
             $requesttype = 'PUT';
         } elseif ($command == 'GetColortemperature') {
-            $url = $url.'state/ct';
+            $url = $url . 'state/ct';
             $requesttype = 'GET';
         } elseif ($command == 'ColorMode') {
-            $url = $url.'state/colorMode';
+            $url = $url . 'state/colorMode';
             $requesttype = 'GET';
         } elseif ($command == 'SelectEffect') {
-            $url = $url.'effects';
-            $postfields = '{"select":"'.$commandvalue.'"}';
+            $url = $url . 'effects';
+            $postfields = '{"select":"' . $commandvalue . '"}';
             $requesttype = 'PUT';
         } elseif ($command == 'GetEffect') {
-            $url = $url.'effects/select';
+            $url = $url . 'effects/select';
             $requesttype = 'GET';
         } elseif ($command == 'List') {
-            $url = $url.'effects/effectsList';
+            $url = $url . 'effects/effectsList';
             $requesttype = 'GET';
         } elseif ($command == 'Random') {
-            $url = $url.'effects';
-            $result = json_decode(Sys_GetURLContent($url.'effects/effectsList'), true);
-            $postfields = '{"select":"'.$result[array_rand($result)].'"}';
+            $url = $url . 'effects';
+            $result = json_decode(Sys_GetURLContent($url . 'effects/effectsList'), true);
+            $postfields = '{"select":"' . $result[array_rand($result)] . '"}';
             $requesttype = 'PUT';
         } elseif ($command == 'GetAllInfo') {
             $requesttype = 'GET';
         } elseif ($command == 'DeleteUser') {
             $requesttype = 'DELETE';
-            $url = 'http://'.$host.':'.$port.'/api/v1/'.$commandvalue;
+            $url = 'http://' . $host . ':' . $port . '/api/v1/' . $commandvalue;
         } elseif ($command == 'GetGlobalOrientation') {
             $requesttype = 'GET';
-            $url = $url.'panelLayout/globalOrientation';
+            $url = $url . 'panelLayout/globalOrientation';
         } elseif ($command == 'SetGlobalOrientation') {
             $requesttype = 'PUT';
-            $postfields = '{"globalOrientation" : {"value":'.$commandvalue.'}}';
-            $url = $url.'panelLayout';
+            $postfields = '{"globalOrientation" : {"value":' . $commandvalue . '}}';
+            $url = $url . 'panelLayout';
         } elseif ($command == 'Layout') {
             $requesttype = 'GET';
-            $url = $url.'panelLayout/layout';
+            $url = $url . 'panelLayout/layout';
         } elseif ($command == 'Identify') {
             $requesttype = 'PUT';
-            $url = $url.'identify';
+            $url = $url . 'identify';
             $postfields = '';
         }
         $ch = curl_init($url);
@@ -411,7 +413,7 @@ class Nanoleaf extends IPSModule
         $g = str_pad(dechex($rgb['g']), 2, 0, STR_PAD_LEFT);
         $b = str_pad(dechex($rgb['b']), 2, 0, STR_PAD_LEFT);
 
-        return $r.$g.$b;
+        return $r . $g . $b;
     }
 
     protected function RGB2HSV($r, $g, $b)
@@ -649,13 +651,13 @@ class Nanoleaf extends IPSModule
         $serialNo = $info['serialnumber'];
         $firmwareVersion = $info['firmware'];
         $model = $info['model'];
-        $this->SendDebug('Nanoleaf:', 'name: '.$name, 0);
+        $this->SendDebug('Nanoleaf:', 'name: ' . $name, 0);
         $this->WriteAttributeString('serialNo', $serialNo);
-        $this->SendDebug('Nanoleaf:', 'serial number: '.$serialNo, 0);
+        $this->SendDebug('Nanoleaf:', 'serial number: ' . $serialNo, 0);
         $this->WriteAttributeString('firmwareVersion', $firmwareVersion);
-        $this->SendDebug('Nanoleaf:', 'firmware version: '.$firmwareVersion, 0);
+        $this->SendDebug('Nanoleaf:', 'firmware version: ' . $firmwareVersion, 0);
         $this->WriteAttributeString('model', $model);
-        $this->SendDebug('Nanoleaf:', 'model: '.$model, 0);
+        $this->SendDebug('Nanoleaf:', 'model: ' . $model, 0);
     }
 
     public function GetGlobalOrientation()
@@ -731,7 +733,7 @@ class Nanoleaf extends IPSModule
         } else {
             $profile = IPS_GetVariableProfile($Name);
             if ($profile['ProfileType'] != 1) {
-                throw new Exception('Variable profile type does not match for profile '.$Name);
+                throw new Exception('Variable profile type does not match for profile ' . $Name);
             }
         }
 
@@ -769,7 +771,7 @@ class Nanoleaf extends IPSModule
         } else {
             $profile = IPS_GetVariableProfile($Name);
             if ($profile['ProfileType'] != 2) {
-                throw new Exception('Variable profile type does not match for profile '.$Name);
+                throw new Exception('Variable profile type does not match for profile ' . $Name);
             }
         }
 
