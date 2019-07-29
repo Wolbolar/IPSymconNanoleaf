@@ -87,11 +87,11 @@ class NanoleafDiscovery extends IPSModule
         $ident = str_replace('.', '_', $host); // Replaces all . with underline.
         $CategoryID = $this->CreateNanoleafScriptCategory();
         //Prüfen ob Kategorie schon existiert
-        $HubCategoryID = @IPS_GetObjectIDByIdent('CatNanoleafDevice_'.$ident, $CategoryID);
+        $HubCategoryID = @IPS_GetObjectIDByIdent('CatNanoleafDevice_' . $ident, $CategoryID);
         if ($HubCategoryID === false) {
             $HubCategoryID = IPS_CreateCategory();
-            IPS_SetName($HubCategoryID, $deviceid.' ('.$host.')');
-            IPS_SetIdent($HubCategoryID, 'CatNanoleafDevice_'.$ident); // Ident muss eindeutig sein
+            IPS_SetName($HubCategoryID, $deviceid . ' (' . $host . ')');
+            IPS_SetIdent($HubCategoryID, 'CatNanoleafDevice_' . $ident); // Ident muss eindeutig sein
             IPS_SetInfo($HubCategoryID, $host);
             IPS_SetParent($HubCategoryID, $CategoryID);
         }
@@ -148,7 +148,7 @@ class NanoleafDiscovery extends IPSModule
 
     protected function CreateSkript($name, $scriptname, $DeviceCategoryID)
     {
-        $command_ident = 'Nanoleaf_Device_'.$this->CreateIdent($name).'_Command_'.$this->CreateIdent($scriptname);
+        $command_ident = 'Nanoleaf_Device_' . $this->CreateIdent($name) . '_Command_' . $this->CreateIdent($scriptname);
         $ScriptID = @IPS_GetObjectIDByIdent($command_ident, $DeviceCategoryID);
         if ($ScriptID === false) {
             $ScriptID = IPS_CreateScript(0);
@@ -163,7 +163,7 @@ class NanoleafDiscovery extends IPSModule
     protected function SetupScriptPowerOn($objid, $name, $DeviceCategoryID)
     {
         $ScriptID = $this->CreateSkript($name, 'PowerOn', $DeviceCategoryID);
-        $content = '<? Nanoleaf_On('.$objid.');?>';
+        $content = '<? Nanoleaf_On(' . $objid . ');?>';
         IPS_SetScriptContent($ScriptID, $content);
 
         return $ScriptID;
@@ -172,7 +172,7 @@ class NanoleafDiscovery extends IPSModule
     protected function SetupScriptPowerOff($objid, $name, $DeviceCategoryID)
     {
         $ScriptID = $this->CreateSkript($name, 'PowerOff', $DeviceCategoryID);
-        $content = '<? Nanoleaf_Off('.$objid.');?>';
+        $content = '<? Nanoleaf_Off(' . $objid . ');?>';
         IPS_SetScriptContent($ScriptID, $content);
 
         return $ScriptID;
@@ -181,17 +181,17 @@ class NanoleafDiscovery extends IPSModule
     protected function SetupScriptPowerToggle($objid, $name, $scriptid_on, $scriptid_off, $DeviceCategoryID)
     {
         $ScriptID = $this->CreateSkript($name, 'PowerToggle', $DeviceCategoryID);
-        $content = '<?'.PHP_EOL;
-        $content .= '$status = GetValueBoolean(IPS_GetObjectIDByIdent("State", '.$objid.')); // Status des Geräts auslesen'.PHP_EOL;
-        $content .= 'IPS_LogMessage( "Nanoleaf:" , "NEO Script toggle" );'.PHP_EOL;
-        $content .= 'if ($status == false)// Befehl ausführen'.PHP_EOL;
-        $content .= '		{'.PHP_EOL;
-        $content .= '		IPS_RunScript('.$scriptid_on.');'.PHP_EOL;
-        $content .= '	    }'.PHP_EOL;
-        $content .= 'elseif ($status == true)// Befehl ausführen'.PHP_EOL;
-        $content .= '		{'.PHP_EOL;
-        $content .= '	    IPS_RunScript('.$scriptid_off.');'.PHP_EOL;
-        $content .= '		}'.PHP_EOL;
+        $content = '<?' . PHP_EOL;
+        $content .= '$status = GetValueBoolean(IPS_GetObjectIDByIdent("State", ' . $objid . ')); // Status des Geräts auslesen' . PHP_EOL;
+        $content .= 'IPS_LogMessage( "Nanoleaf:" , "NEO Script toggle" );' . PHP_EOL;
+        $content .= 'if ($status == false)// Befehl ausführen' . PHP_EOL;
+        $content .= '		{' . PHP_EOL;
+        $content .= '		IPS_RunScript(' . $scriptid_on . ');' . PHP_EOL;
+        $content .= '	    }' . PHP_EOL;
+        $content .= 'elseif ($status == true)// Befehl ausführen' . PHP_EOL;
+        $content .= '		{' . PHP_EOL;
+        $content .= '	    IPS_RunScript(' . $scriptid_off . ');' . PHP_EOL;
+        $content .= '		}' . PHP_EOL;
         $content .= '?>';
         IPS_SetScriptContent($ScriptID, $content);
     }
@@ -245,7 +245,7 @@ class NanoleafDiscovery extends IPSModule
         // reverse array
         $tree_position = array_reverse($tree_position);
         array_push($tree_position, $this->Translate('Nanoleaf devices'));
-        array_push($tree_position, $devicename.' ('.$hubip.')');
+        array_push($tree_position, $devicename . ' (' . $hubip . ')');
         $this->SendDebug('Nanoleaf Location', json_encode($tree_position), 0);
 
         return $tree_position;
@@ -273,7 +273,7 @@ class NanoleafDiscovery extends IPSModule
                 foreach ($DeviceIDList as $DeviceID) {
                     if ($uuid == IPS_GetProperty($DeviceID, 'uuid')) {
                         $devicename = IPS_GetName($DeviceID);
-                        $this->SendDebug('Broadlink Config', 'device found: '.utf8_decode($devicename).' ('.$DeviceID.')', 0);
+                        $this->SendDebug('Broadlink Config', 'device found: ' . utf8_decode($devicename) . ' (' . $DeviceID . ')', 0);
                         $instanceID = $DeviceID;
                     }
                 }
@@ -354,13 +354,13 @@ class NanoleafDiscovery extends IPSModule
     {
         $user_agent = 'MacOSX/10.8.2 UPnP/1.1 PHP-UPnP/0.0.1a';
         // BUILD MESSAGE
-        $msg = 'M-SEARCH * HTTP/1.1'."\r\n";
-        $msg .= 'HOST: 239.255.255.250:1900'."\r\n";
-        $msg .= 'MAN: "'.$man.'"'."\r\n";
-        $msg .= 'MX: '.$mx."\r\n";
-        $msg .= 'ST:'.$st."\r\n";
-        $msg .= 'USER-AGENT: '.$user_agent."\r\n";
-        $msg .= ''."\r\n";
+        $msg = 'M-SEARCH * HTTP/1.1' . "\r\n";
+        $msg .= 'HOST: 239.255.255.250:1900' . "\r\n";
+        $msg .= 'MAN: "' . $man . '"' . "\r\n";
+        $msg .= 'MX: ' . $mx . "\r\n";
+        $msg .= 'ST:' . $st . "\r\n";
+        $msg .= 'USER-AGENT: ' . $user_agent . "\r\n";
+        $msg .= '' . "\r\n";
         // MULTICAST MESSAGE
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
         if (!$socket) {
