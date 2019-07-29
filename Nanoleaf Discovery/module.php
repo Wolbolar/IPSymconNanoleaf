@@ -31,8 +31,7 @@ class NanoleafDiscovery extends IPSModule
         }
 
         $devices = $this->DiscoverDevices();
-        if(!empty($devices))
-        {
+        if (!empty($devices)) {
             $this->WriteAttributeString('devices', json_encode($devices));
         }
         $this->SetTimerInterval('Discovery', 300000);
@@ -43,7 +42,6 @@ class NanoleafDiscovery extends IPSModule
 
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
-
         switch ($Message) {
             case IM_CHANGESTATUS:
                 if ($Data[0] === IS_ACTIVE) {
@@ -58,8 +56,7 @@ class NanoleafDiscovery extends IPSModule
                 break;
             case IPS_KERNELSTARTED:
                 $devices = $this->DiscoverDevices();
-                if(!empty($devices))
-                {
+                if (!empty($devices)) {
                     $this->WriteAttributeString('devices', json_encode($devices));
                 }
                 break;
@@ -75,8 +72,7 @@ class NanoleafDiscovery extends IPSModule
         $NanoleafScript = $this->ReadPropertyBoolean('NanoleafScript');
         //Skripte installieren
         if ($NanoleafScript == true) {
-            foreach($devices as $device)
-            {
+            foreach ($devices as $device) {
                 $DeviceCategoryID = $this->CreateNanoleafCategory($device);
                 $this->SendDebug('Nanoleaf', 'Setup Scripts', 0);
                 $this->SetNanoleafInstanceScripts($DeviceCategoryID);
@@ -100,6 +96,7 @@ class NanoleafDiscovery extends IPSModule
             IPS_SetParent($HubCategoryID, $CategoryID);
         }
         $this->SendDebug('Nanoleaf Skript Category', strval($HubCategoryID), 0);
+
         return $HubCategoryID;
     }
 
@@ -116,6 +113,7 @@ class NanoleafDiscovery extends IPSModule
             IPS_SetParent($NanoleafScriptCategoryID, $CategoryID);
         }
         $this->SendDebug('Nanoleaf Script Category', strval($NanoleafScriptCategoryID), 0);
+
         return $NanoleafScriptCategoryID;
     }
 
@@ -123,21 +121,21 @@ class NanoleafDiscovery extends IPSModule
     {
         $NanoleafInstanceIDList = IPS_GetInstanceListByModuleID('{09AEFA0B-1494-CB8B-A7C0-1982D0D99C7E}'); // Nanoleaf Devices
         $NanoleafInstanceList = [];
-        foreach($NanoleafInstanceIDList as $key => $NanoleafInstanceID)
-        {
+        foreach ($NanoleafInstanceIDList as $key => $NanoleafInstanceID) {
             $deviceid = IPS_GetProperty($NanoleafInstanceID, 'deviceid');
-            $ident =  str_replace(':', '_', $deviceid); // Replaces all : with underline.
+            $ident = str_replace(':', '_', $deviceid); // Replaces all : with underline.
             $ident = str_replace(' ', '_', $ident); // Replaces all space with underline.
             $name = IPS_GetName($NanoleafInstanceID);
             $NanoleafInstanceList[$ident] = ['objid' => $NanoleafInstanceID, 'ident' => $ident, 'deviceid' => $deviceid, 'name' => $name];
         }
+
         return $NanoleafInstanceList;
     }
 
     protected function SetNanoleafInstanceScripts($DeviceCategoryID)
     {
         $devices = $this->GetCurrentNanoleafDevices(); // Nanoleaf Devices
-        if(!empty($devices)) {
+        if (!empty($devices)) {
             foreach ($devices as $device) {
                 $objid = $device['objid'];
                 $name = $device['name'];
@@ -158,6 +156,7 @@ class NanoleafDiscovery extends IPSModule
             IPS_SetParent($ScriptID, $DeviceCategoryID);
             IPS_SetIdent($ScriptID, $command_ident);
         }
+
         return $ScriptID;
     }
 
@@ -166,6 +165,7 @@ class NanoleafDiscovery extends IPSModule
         $ScriptID = $this->CreateSkript($name, 'PowerOn', $DeviceCategoryID);
         $content = '<? Nanoleaf_On(' . $objid . ');?>';
         IPS_SetScriptContent($ScriptID, $content);
+
         return $ScriptID;
     }
 
@@ -174,6 +174,7 @@ class NanoleafDiscovery extends IPSModule
         $ScriptID = $this->CreateSkript($name, 'PowerOff', $DeviceCategoryID);
         $content = '<? Nanoleaf_Off(' . $objid . ');?>';
         IPS_SetScriptContent($ScriptID, $content);
+
         return $ScriptID;
     }
 
@@ -208,7 +209,7 @@ class NanoleafDiscovery extends IPSModule
             '/', '(', ')', '=', '?', '`', '´', '*', "'",
             '-', ':', ';', '²', '³', '{', '}',
             '\\', '~', '#', '+', '.', ',',
-            '=', ':', '=)'];
+            '=', ':', '=)', ];
         $replace = ['ae', 'oe', 'ue', 'ss', 'Ae', 'Oe',
             'Ue', 'und', 'e', 'a', 'o', '', '',
             '', '', '', '', '', '', '', '', '',
@@ -216,13 +217,14 @@ class NanoleafDiscovery extends IPSModule
             '', '', '', '', '', '', '', '', '',
             '', '', '', '', '', '', '', '', '',
             '', '', '', '', '', '', '', '', '',
-            '', '', '', '', '', '', '', '', '', ''];
+            '', '', '', '', '', '', '', '', '', '', ];
 
         $str = str_replace($search, $replace, $str);
         $str = str_replace(' ', '_', $str); // Replaces all spaces with underline.
         $how = '_';
         //$str = strtolower(preg_replace("/[^a-zA-Z0-9]+/", trim($how), $str));
         $str = preg_replace('/[^a-zA-Z0-9]+/', trim($how), $str);
+
         return $str;
     }
 
@@ -245,6 +247,7 @@ class NanoleafDiscovery extends IPSModule
         array_push($tree_position, $this->Translate('Nanoleaf devices'));
         array_push($tree_position, $devicename . ' (' . $hubip . ')');
         $this->SendDebug('Nanoleaf Location', json_encode($tree_position), 0);
+
         return $tree_position;
     }
 
@@ -283,7 +286,6 @@ class NanoleafDiscovery extends IPSModule
                     'host'       => $host,
                     'port'       => $port,
                     'uuid'       => $uuid,
-                    'location'   => $this->SetLocation($devicename, $host),
                     'create'     => [
                         'moduleID'      => '{09AEFA0B-1494-CB8B-A7C0-1982D0D99C7E}',
                         'configuration' => [
@@ -291,12 +293,14 @@ class NanoleafDiscovery extends IPSModule
                             'deviceid' => $device_id,
                             'host'     => $host,
                             'port'     => $port,
-                            'uuid'     => $uuid
-                        ]
-                    ]
+                            'uuid'     => $uuid,
+                        ],
+                        'location'   => $this->SetLocation($devicename, $host),
+                    ],
                 ];
             }
         }
+
         return $config_list;
     }
 
@@ -310,13 +314,13 @@ class NanoleafDiscovery extends IPSModule
         $devices = $this->mSearch('nanoleaf:nl29'); // Canvas
         $this->SendDebug('Discover Response:', json_encode($devices), 0);
         $result = $this->CreateDeviceList($result, $devices);
+
         return $result;
     }
 
     private function CreateDeviceList($result, $devices)
     {
         foreach ($devices as $device) {
-
             $obj = [];
 
             $obj['uuid'] = $device['uuid'];
@@ -332,6 +336,7 @@ class NanoleafDiscovery extends IPSModule
             $this->SendDebug('port:', $obj['port'], 0);
             array_push($result, $obj);
         }
+
         return $result;
     }
 
@@ -384,12 +389,9 @@ class NanoleafDiscovery extends IPSModule
         // CLOSE SOCKET
         socket_close($socket);
         $nanoleaf_response = [];
-        foreach($response as $device)
-        {
-            if(isset($device['st']))
-            {
-                if($device['st'] == 'nanoleaf_aurora:light' || $device['st'] == 'nanoleaf:nl29')
-                {
+        foreach ($response as $device) {
+            if (isset($device['st'])) {
+                if ($device['st'] == 'nanoleaf_aurora:light' || $device['st'] == 'nanoleaf:nl29') {
                     $nanoleaf_response[] = ['uuid' => str_ireplace('uuid:', '', $device['usn']), 'location' => $device['location'], 'nl-deviceid' => $device['nl-deviceid'], 'nl-devicename' => $device['nl-devicename']];
                 }
             }
@@ -403,67 +405,56 @@ class NanoleafDiscovery extends IPSModule
         $responseArr = explode("\r\n", $response);
         $parsedResponse = [];
         foreach ($responseArr as $key => $row) {
-            if (stripos($row, 'http') === 0)
-            {
+            if (stripos($row, 'http') === 0) {
                 $parsedResponse['http'] = $row;
                 $this->SendDebug('Discovered Device http:', json_encode($parsedResponse['http']), 0);
             }
-            if (stripos($row, 'cach') === 0)
-            {
+            if (stripos($row, 'cach') === 0) {
                 $parsedResponse['cache-control'] = str_ireplace('cache-control: ', '', $row);
                 $this->SendDebug('Discovered Device cache-control:', json_encode($parsedResponse['cache-control']), 0);
             }
-            if (stripos($row, 'date') === 0)
-            {
+            if (stripos($row, 'date') === 0) {
                 $parsedResponse['date'] = str_ireplace('date: ', '', $row);
                 $this->SendDebug('Discovered Device date:', json_encode($parsedResponse['date']), 0);
             }
-            if (stripos($row, 'ext') === 0)
-            {
+            if (stripos($row, 'ext') === 0) {
                 $parsedResponse['ext'] = str_ireplace('ext: ', '', $row);
                 $this->SendDebug('Discovered Device ext:', json_encode($parsedResponse['ext']), 0);
             }
-            if (stripos($row, 'loca') === 0)
-            {
+            if (stripos($row, 'loca') === 0) {
                 $parsedResponse['location'] = str_ireplace('location: ', '', $row);
                 $this->SendDebug('Discovered Device location:', json_encode($parsedResponse['location']), 0);
             }
-            if (stripos($row, 'serv') === 0)
-            {
+            if (stripos($row, 'serv') === 0) {
                 $parsedResponse['server'] = str_ireplace('server: ', '', $row);
                 $this->SendDebug('Discovered Device server:', json_encode($parsedResponse['server']), 0);
             }
-            if (stripos($row, 'st:') === 0)
-            {
+            if (stripos($row, 'st:') === 0) {
                 $parsedResponse['st'] = str_ireplace('st: ', '', $row);
                 $this->SendDebug('Discovered Device st:', json_encode($parsedResponse['st']), 0);
             }
-            if (stripos($row, 'usn:') === 0)
-            {
+            if (stripos($row, 'usn:') === 0) {
                 $parsedResponse['usn'] = str_ireplace('usn: ', '', $row);
                 $this->SendDebug('Discovered Device usn:', json_encode($parsedResponse['usn']), 0);
             }
-            if (stripos($row, 'cont') === 0)
-            {
+            if (stripos($row, 'cont') === 0) {
                 $parsedResponse['content-length'] = str_ireplace('content-length: ', '', $row);
                 $this->SendDebug('Discovered Device content-length:', json_encode($parsedResponse['content-length']), 0);
             }
-            if (stripos($row, 'nt:') === 0)
-            {
+            if (stripos($row, 'nt:') === 0) {
                 $parsedResponse['nt'] = str_ireplace('nt: ', '', $row);
                 $this->SendDebug('Discovered Device nt:', json_encode($parsedResponse['nt']), 0);
             }
-            if (stripos($row, 'nl-deviceid') === 0)
-            {
+            if (stripos($row, 'nl-deviceid') === 0) {
                 $parsedResponse['nl-deviceid'] = str_ireplace('nl-deviceid: ', '', $row);
                 $this->SendDebug('Discovered Device nl-deviceid:', json_encode($parsedResponse['nl-deviceid']), 0);
             }
-            if (stripos($row, 'nl-devicename:') === 0)
-            {
+            if (stripos($row, 'nl-devicename:') === 0) {
                 $parsedResponse['nl-devicename'] = str_ireplace('nl-devicename: ', '', $row);
                 $this->SendDebug('Discovered Device nl-devicename:', json_encode($parsedResponse['nl-devicename']), 0);
             }
         }
+
         return $parsedResponse;
     }
 
@@ -475,6 +466,7 @@ class NanoleafDiscovery extends IPSModule
         $ip = $location[0];
         $port = $location[1];
         $nanoleaf_info = ['ip' => $ip, 'port' => $port];
+
         return $nanoleaf_info;
     }
 
@@ -483,6 +475,7 @@ class NanoleafDiscovery extends IPSModule
         $devices = $this->ReadAttributeString('devices');
         $this->SendDebug('Nanoleaf Devices', $devices, 0);
         $devices = json_decode($devices, true);
+
         return $devices;
     }
 
@@ -490,8 +483,7 @@ class NanoleafDiscovery extends IPSModule
     {
         $this->LogMessage($this->Translate('Background Discovery of Nanoleaf Devices'), KL_NOTIFY);
         $devices = $this->DiscoverDevices();
-        if(!empty($devices))
-        {
+        if (!empty($devices)) {
             $this->WriteAttributeString('devices', json_encode($devices));
         }
     }
@@ -511,10 +503,11 @@ class NanoleafDiscovery extends IPSModule
         $Form = json_encode([
             'elements' => $this->FormHead(),
             'actions'  => $this->FormActions(),
-            'status'   => $this->FormStatus()
+            'status'   => $this->FormStatus(),
         ]);
         $this->SendDebug('FORM', $Form, 0);
         $this->SendDebug('FORM', json_last_error_msg(), 0);
+
         return $Form;
     }
 
@@ -528,21 +521,21 @@ class NanoleafDiscovery extends IPSModule
         $form = [
             [
                 'type'  => 'Label',
-                'label' => 'category for Nanoleaf devices'
+                'label' => 'category for Nanoleaf devices',
             ],
             [
                 'name'    => 'ImportCategoryID',
                 'type'    => 'SelectCategory',
-                'caption' => 'category Nanoleaf'
+                'caption' => 'category Nanoleaf',
             ],
             [
                 'type'  => 'Label',
-                'label' => 'create scripts for remote control (alternative or addition for remote control via webfront):'
+                'label' => 'create scripts for remote control (alternative or addition for remote control via webfront):',
             ],
             [
                 'name'    => 'NanoleafScript',
                 'type'    => 'CheckBox',
-                'caption' => 'Nanoleaf script'
+                'caption' => 'Nanoleaf script',
             ],
             [
                 'name'     => 'NanoleafDiscovery',
@@ -552,45 +545,46 @@ class NanoleafDiscovery extends IPSModule
                 'delete'   => true,
                 'sort'     => [
                     'column'    => 'name',
-                    'direction' => 'ascending'
+                    'direction' => 'ascending',
                 ],
                 'columns' => [
                     [
                         'label'   => 'ID',
                         'name'    => 'id',
                         'width'   => '200px',
-                        'visible' => false
+                        'visible' => false,
                     ],
                     [
                         'label' => 'device name',
                         'name'  => 'name',
-                        'width' => 'auto'
+                        'width' => 'auto',
                     ],
                     [
                         'label'   => 'device id',
                         'name'    => 'deviceid',
                         'width'   => '250px',
-                        'visible' => true
+                        'visible' => true,
                     ],
                     [
                         'label' => 'IP adress',
                         'name'  => 'host',
-                        'width' => '140px'
+                        'width' => '140px',
                     ],
                     [
                         'label' => 'port',
                         'name'  => 'port',
-                        'width' => '80px'
+                        'width' => '80px',
                     ],
                     [
                         'label' => 'uuid',
                         'name'  => 'uuid',
-                        'width' => '350px'
-                    ]
+                        'width' => '350px',
+                    ],
                 ],
-                'values' => $this->Get_ListConfiguration()
-            ]
+                'values' => $this->Get_ListConfiguration(),
+            ],
         ];
+
         return $form;
     }
 
@@ -604,14 +598,15 @@ class NanoleafDiscovery extends IPSModule
         $form = [
             [
                 'type'  => 'Label',
-                'label' => 'create scripts for remote control (alternative or addition for remote control via webfront):'
+                'label' => 'create scripts for remote control (alternative or addition for remote control via webfront):',
             ],
             [
                 'type'    => 'Button',
                 'label'   => 'Setup Nanoleaf',
-                'onClick' => 'NanoleafDiscovery_SetupNanoleaf($id);'
-            ]
+                'onClick' => 'NanoleafDiscovery_SetupNanoleaf($id);',
+            ],
         ];
+
         return $form;
     }
 
@@ -626,23 +621,23 @@ class NanoleafDiscovery extends IPSModule
             [
                 'code'    => 101,
                 'icon'    => 'inactive',
-                'caption' => 'Creating instance.'
+                'caption' => 'Creating instance.',
             ],
             [
                 'code'    => 102,
                 'icon'    => 'active',
-                'caption' => 'Nanoleaf Discovery created.'
+                'caption' => 'Nanoleaf Discovery created.',
             ],
             [
                 'code'    => 104,
                 'icon'    => 'inactive',
-                'caption' => 'interface closed.'
+                'caption' => 'interface closed.',
             ],
             [
                 'code'    => 201,
                 'icon'    => 'inactive',
-                'caption' => 'Please follow the instructions.'
-            ]
+                'caption' => 'Please follow the instructions.',
+            ],
         ];
 
         return $form;
