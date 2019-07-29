@@ -286,7 +286,6 @@ class NanoleafDiscovery extends IPSModule
                     'host'       => $host,
                     'port'       => $port,
                     'uuid'       => $uuid,
-                    'location'   => $this->SetLocation($devicename, $host),
                     'create'     => [
                         'moduleID'      => '{09AEFA0B-1494-CB8B-A7C0-1982D0D99C7E}',
                         'configuration' => [
@@ -296,6 +295,7 @@ class NanoleafDiscovery extends IPSModule
                             'port'     => $port,
                             'uuid'     => $uuid,
                         ],
+						'location'   => $this->SetLocation($devicename, $host),
                     ],
                 ];
             }
