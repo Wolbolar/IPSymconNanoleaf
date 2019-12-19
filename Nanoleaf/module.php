@@ -434,7 +434,7 @@ class Nanoleaf extends IPSModule
         $chroma = $maxRGB - $minRGB;
         $v      = $maxRGB * 100; // $v 0 - 100
         if ($chroma == 0) {
-            return ['h' => 0, 's' => 0, 'v' => intval($v)];
+            return ['h' => 0, 's' => 0, 'v' => $v];
         }
         $s = ($chroma / $maxRGB) * 100; // $s 0 - 100
         if ($r == $minRGB) {
@@ -445,7 +445,7 @@ class Nanoleaf extends IPSModule
             $h = 5 - (($b - $r) / $chroma);
         }
         $h = $h / 6 * 360; // 0 - 359
-        return ['h' => intval(round($h)), 's' => intval(round($s)), 'v' => intval(round($v))];
+        return ['h' => round($h), 's' => round($s), 'v' => round($v)];
     }
 
     protected function HSV2RGB($h, $s, $v)
