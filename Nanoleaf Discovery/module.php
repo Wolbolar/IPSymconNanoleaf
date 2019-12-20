@@ -349,19 +349,19 @@ class NanoleafDiscovery extends IPSModule
         $i = 0;
         foreach($devices as $device)
         {
-            if(isset($device["ST"]))
+            if(isset($device['ST']))
             {
-                if($device["ST"] == "nanoleaf_aurora:light" || $device["ST"] == "nanoleaf:nl29")
+                if($device['ST'] == 'nanoleaf_aurora:light' || $device['ST'] == 'nanoleaf:nl29')
                 {
-                    $fields = $device["Fields"];
+                    $fields = $device['Fields'];
                     foreach($fields as $field)
                     {
-                        if( stripos( $field, 'Location:') === 0 )
-                            $nanoleaf_response[$i]['location'] = str_ireplace( 'location: ', '', $field );
-                        if( stripos( $field, 'nl-deviceid') === 0 )
-                            $nanoleaf_response[$i]['nl-deviceid'] = str_ireplace( 'nl-deviceid: ', '', $field );
-                        if( stripos( $field, 'nl-devicename:') === 0 )
-                            $nanoleaf_response[$i]['nl-devicename'] = str_ireplace( 'nl-devicename: ', '', $field );
+                        if(stripos($field, 'Location:') === 0)
+                            $nanoleaf_response[$i]['location'] = str_ireplace('location: ', '', $field);
+                        if(stripos($field, 'nl-deviceid') === 0)
+                            $nanoleaf_response[$i]['nl-deviceid'] = str_ireplace('nl-deviceid: ', '', $field);
+                        if(stripos($field, 'nl-devicename:') === 0)
+                            $nanoleaf_response[$i]['nl-devicename'] = str_ireplace('nl-devicename: ', '', $field);
                     }
                     $nanoleaf_response[$i]['uuid'] = str_ireplace('uuid:', '', $device['USN']);
                     $i = $i++;
