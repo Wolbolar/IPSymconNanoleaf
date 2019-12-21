@@ -364,7 +364,7 @@ class NanoleafDiscovery extends IPSModule
                             $nanoleaf_response[$i]['nl-devicename'] = str_ireplace('nl-devicename: ', '', $field);
                     }
                     $nanoleaf_response[$i]['uuid'] = str_ireplace('uuid:', '', $device['USN']);
-                    $i = $i++;
+                    $i++;
                 }
             }
         }
