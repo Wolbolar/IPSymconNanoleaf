@@ -59,8 +59,8 @@ class Nanoleaf extends IPSModule
             $this->RegisterVariableInteger('colortemperature', $this->Translate('ct'), 'Nanoleaf.Colortemperature', 6); // "max" : 6500, "min" : 1200
             $this->EnableAction('colortemperature');
             $effectass = $this->GetEffectArray();
-            $this->RegisterProfileIntegerAss('Nanoleaf.Effect', 'Light', '', '', 1, 8, 0, 0, $effectass);
-            $this->RegisterVariableInteger('effect', $this->Translate('effect'), 'Nanoleaf.Effect', 7);
+            $this->RegisterProfileIntegerAss('Nanoleaf.Effect'.$this->InstanceID, 'Light', '', '', 1, 8, 0, 0, $effectass);
+            $this->RegisterVariableInteger('effect', $this->Translate('effect'), 'Nanoleaf.Effect'.$this->InstanceID, 7);
             $this->EnableAction('effect');
             $this->SetValue('effect', 1);
             $this->SetUpdateIntervall();
@@ -107,9 +107,9 @@ class Nanoleaf extends IPSModule
     public function UpdateEffectProfile()
     {
         $effectass = $this->GetEffectArray();
-        if (IPS_VariableProfileExists('Nanoleaf.Effect')) {
+        if (IPS_VariableProfileExists('Nanoleaf.Effect'.$this->InstanceID)) {
             foreach ($effectass as $Association) {
-                IPS_SetVariableProfileAssociation('Nanoleaf.Effect', $Association[0], $Association[1], $Association[2], $Association[3]);
+                IPS_SetVariableProfileAssociation('Nanoleaf.Effect'.$this->InstanceID, $Association[0], $Association[1], $Association[2], $Association[3]);
             }
         }
         return $effectass;
@@ -622,7 +622,7 @@ class Nanoleaf extends IPSModule
 
     protected function GetCurrentEffectProfile()
     {
-        $effects = IPS_GetVariableProfile('Nanoleaf.Effect')['Associations'];
+        $effects = IPS_GetVariableProfile('Nanoleaf.Effect'.$this->InstanceID)['Associations'];
 
         return $effects;
     }
